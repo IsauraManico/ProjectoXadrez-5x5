@@ -65,11 +65,11 @@ public class QuadroXadrez implements Serializable, Cloneable
            
             //pecas pretas.........................................................
             
-            pecas.add(new Rainha(new Point(0, 0), Peca.Color.preta));//3
-            pecas.add(new Rei(new Point(1, 0), Peca.Color.preta));//4
+            pecas.add(new Rainha(new Point(3, 0), Peca.Color.preta));//3
+            pecas.add(new Rei(new Point(4, 0), Peca.Color.preta));//4
             pecas.add(new Bispo(new Point(2, 0), Peca.Color.preta));//2
-            pecas.add(new Cavalo(new Point(3, 0), Peca.Color.preta));//1
-            pecas.add(new Torre(new Point(4, 0), Peca.Color.preta));//0
+            pecas.add(new Cavalo(new Point(1, 0), Peca.Color.preta));//1
+            pecas.add(new Torre(new Point(0, 0), Peca.Color.preta));//0
             
             pecas.add(new Peao(new Point(0,1),Peca.Color.preta));
             pecas.add(new Peao(new Point(1, 1), Peca.Color.preta));

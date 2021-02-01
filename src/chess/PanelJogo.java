@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
+import javax.swing.JPanel;
 
 /**
  * Um component para jogar e implementar o xadrez
@@ -138,7 +139,7 @@ public class PanelJogo extends JComponent implements MouseListener
         
         // cria um novo Jogo
         novoJog();
-        // then sets the ai for the board
+        // then sets the ai for the board a profundidade do agente e setada aquiiiiii
         gameBoard.setAi(new Agente_IA(corIA, profundidadeIA));   //intelligence artificiallll
         
         // simula um evento de clique para solicitar ao IA para fazer o primeiro movimento
