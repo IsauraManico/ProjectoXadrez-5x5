@@ -100,7 +100,7 @@ public class QuadroXadrez implements Serializable, Cloneable
     /**
      * Construtor privado usado para criar uma cópia profunda do quadro
      * @param vire a cor das pecas para mover a seguir
-     * @param previousState estado anterior do tabuleiro
+     * @param estadoAnterior estado anterior do tabuleiro
      * @param coloca todas as pecas no tabuleiro
      * @param lastMoved piece to move last
      * @param inCheck king in check
@@ -108,7 +108,7 @@ public class QuadroXadrez implements Serializable, Cloneable
      */
 
 
-    private QuadroXadrez(Peca.Color turn, QuadroXadrez previousState, List<Peca> pieces,
+    private QuadroXadrez(Peca.Color turn, QuadroXadrez estadoAnterior, List<Peca> pecas,
             Peca lastMoved, Peca inCheck, Agente_IA ai) {
         this.virar = turn;
         if (inCheck != null)
@@ -116,8 +116,8 @@ public class QuadroXadrez implements Serializable, Cloneable
         if (lastMoved != null)
             this.ultimoMovido = lastMoved.clone();
         this.ai = ai;
-        this.estadoAnterior = previousState;
-        for(Peca p : pieces) {
+        this.estadoAnterior = estadoAnterior;
+        for(Peca p : pecas) {
             this.pecas.add(p.clone());
         }
     }
@@ -244,7 +244,7 @@ public class QuadroXadrez implements Serializable, Cloneable
         if(peao instanceof Peao && (peao.getLocalizacao().y == 0 ||
             peao.getLocalizacao().y == 4)) //7 seria 5 em tab 5*5
         {
-            System.out.println("Localizacao Peao:"+peao.getLocalizacao());
+           // System.out.println("Localizacao Peao:"+peao.getLocalizacao());
             Peca promovido;
             
            // se for ai, promove automaticamente a rainha
@@ -434,6 +434,6 @@ public class QuadroXadrez implements Serializable, Cloneable
 
 
     public boolean localizacaoValida(Point ponto) {
-        return (ponto.x >= 0 && ponto.x <=4) && (ponto.y >= 0 && ponto.y <= 4); //vou mudar para 5;;; estava 7 hhhhh
+        return (ponto.x >= 0 && ponto.x <=4) && (ponto.y >= 0 && ponto.y <= 4); 
     }
 }

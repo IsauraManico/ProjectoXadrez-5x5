@@ -91,8 +91,8 @@ public class Bispo extends Peca
         //adicione movimentos em linhas diagonais à lista
         addMovesInLine(board, moves, 1, 1);
         addMovesInLine(board, moves, -1, 1);
-        //addMovesInLine(board, moves, 1, -1);
-        //addMovesInLine(board, moves, -1, -1);
+        addMovesInLine(board, moves, 1, -1);
+        addMovesInLine(board, moves, -1, -1);
 
        // verifique se o movimento não coloca o próprio rei em cheque
         if (checkKing)

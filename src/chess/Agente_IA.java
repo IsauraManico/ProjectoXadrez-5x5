@@ -3,27 +3,29 @@ package chess;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
+import javax.swing.DefaultListModel;
 /**
  *  
  * Autor: Kiala, Sara,Lionel, Isaura
  * Contem a logica de Inteligencia artificial do jogo xadrez
  *
  */
-public class Agente_IA implements Serializable{
+public class Agente_IA implements Serializable
+{
     
+     public static DefaultListModel<String>l1 = new DefaultListModel<>();  
+     
     private Peca.Color iaCor;
     private int profundidade;
+    static Move melhorMovimento = null;
 
     public Agente_IA()
     {
         
     }
-    /**
-     * Cria um novo objeto do Agente
-     * @param color
-     * @param depth
-     */
-    public Agente_IA(Peca.Color color, int depth) {
+   
+    public Agente_IA(Peca.Color color, int depth) 
+    {
         this.iaCor = color;
         this.profundidade = depth;
     }
@@ -32,7 +34,8 @@ public class Agente_IA implements Serializable{
      * Retorna a cor da peca de controle do agente
      * retorno da cor da pecas do agente
      */
-    public Peca.Color getColor() {
+    public Peca.Color getColor() 
+    {
         return iaCor;
     }
     
@@ -45,7 +48,8 @@ public class Agente_IA implements Serializable{
      */
 
 
-    public Move getMove(QuadroXadrez jogo) {     
+    public  Move getMove(QuadroXadrez jogo)
+    {     
         // se um movimento do quadro esta vazio, return null
         if (jogo == null)
             return null;
@@ -54,22 +58,74 @@ public class Agente_IA implements Serializable{
             return null;
         // inicializa melhor valor and melhor movimentos das variaveis
         int melhorValor = Integer.MIN_VALUE;
-        Move melhorMovimento = null;
+        
+        
         
         // obtenha o melhor movimento para o IA (máximo) a partir dos movimentos disponíveis
         for (Move m : getMoves(jogo))
         {
             // obtenha o valor do movimento (min)
-            int moveValor = min(jogo.tentaMover(m), profundidade - 1, melhorValor, Integer.MAX_VALUE);
+            int moveValor = min(jogo.tentaMover(m), profundidade - 1, melhorValor,
+                                Integer.MAX_VALUE);
             
             // se o valor for> do que bestValue, o movimento atual é melhor
-            if (moveValor > melhorValor || melhorValor == Integer.MIN_VALUE) {
+            if (moveValor > melhorValor || melhorValor == Integer.MIN_VALUE) 
+            {
                 melhorValor = moveValor;
                 melhorMovimento = m;
+                   
+             
             }
+           
         }
         
+        if(iaCor == Peca.Color.branca )
+        {
+            l1.addElement("WHITE -> "+PanelJogo.mostrarMove
+                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
+                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
+        }
+        else if( iaCor == Peca.Color.preta)
+        {
+             l1.addElement("BLACK -> "+PanelJogo.mostrarMove
+                                (melhorMovimento.getPiece().getLocalizacao())+" - "+
+                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
+        }
+       
+       
+     //ver();
+        
         return melhorMovimento;
+        
+    }
+    
+    
+    
+    public void ver( )
+    {
+       
+        
+        
+        if( iaCor == Peca.Color.preta)
+        {
+             PanelJogo.l1.addElement("PRETA -> "+PanelJogo.mostrarMove
+                                (melhorMovimento.getPiece().getLocalizacao())+" - "+
+                   PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
+        }
+        else
+        {//(iaCor == Peca.Color.branca )
+      
+            /*PanelJogo.l1.addElement("WHITE -> "+PanelJogo.mostrarMove
+                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
+                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));*/
+            
+            System.out.println("Branca"+PanelJogo.mostrarMove
+                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
+                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
+        
+        }
+        
+        
     }
     
    /**
@@ -181,7 +237,8 @@ public class Agente_IA implements Serializable{
      * @param gameBoard QuadroXadrez to evaluate
      * @return value of the QuadroXadrez
      */
-    private int valorQuadroXadrez(QuadroXadrez gameBoard) {
+    private int valorQuadroXadrez(QuadroXadrez gameBoard)
+    {
         int valor = 0;
         int iaPecas = 0;
         int iaMoves = 0;
@@ -249,7 +306,8 @@ public class Agente_IA implements Serializable{
      * peça @param pc para avaliar
      * @valor de retorno da peça
      */
-    public static  int valorDaPeca(Peca pc) {
+    public static  int valorDaPeca(Peca pc)
+    {
         return (int)Math.pow(pc.getNumImagem() + 1, 3) * 100;
     }
 }

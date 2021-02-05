@@ -102,6 +102,7 @@ public class Peao extends Peca {
                 if (board.moveReiPodeEstarEmCheck(moves.get(i), this.color)) {
                    // se o movimento colocaria o rei em cheque, é inválido e
                     // é removido da lista
+                    
                     moves.remove(moves.get(i));
                    // iterador é diminuído devido ao tamanho da lista
                     // diminuindo.

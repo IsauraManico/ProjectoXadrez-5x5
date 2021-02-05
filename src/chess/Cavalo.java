@@ -57,6 +57,7 @@ public class Cavalo extends Peca
      * Retorna a imagem branca para esta peça
      * @return white image
      */
+    @Override
     public BufferedImage getWhiteImage() {
         return imagensBrancas[imageNumber];
     }
@@ -99,10 +100,12 @@ public class Cavalo extends Peca
         addIfValid(board, moves, new Point(x - 1, y + 2));
         addIfValid(board, moves, new Point(x + 1, y - 2));
         addIfValid(board, moves, new Point(x - 1, y - 2));
-       // addIfValid(board, moves, new Point(x + 2, y - 1));
-       // addIfValid(board, moves, new Point(x + 2, y + 1));
-       // addIfValid(board, moves, new Point(x - 2, y - 1));
-       // addIfValid(board, moves, new Point(x - 2, y + 1));    
+        
+        /////////////////////////////////////////////////////////////
+        addIfValid(board, moves, new Point(x + 2, y - 1));
+        addIfValid(board, moves, new Point(x + 2, y + 1));
+        addIfValid(board, moves, new Point(x - 2, y - 1));
+        addIfValid(board, moves, new Point(x - 2, y + 1));    
 
        // verifique se o movimento não coloca o próprio rei em cheque
         if (checkKing)
