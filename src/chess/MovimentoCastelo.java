@@ -13,8 +13,8 @@ public class MovimentoCastelo extends Move
     private Point moveRookTo;
     /**
      * Cria um novo objeto de castelo
-     * @param rei king para mover
-     * @param movendoRei point para mover o rei para
+     * @param rei para mover
+     * @param movendoRei ponto para mover o rei para
      * @param torre torre para mover
      * @param movendoTorre ponto para mover a torre para
      */
@@ -25,16 +25,16 @@ public class MovimentoCastelo extends Move
     }
     
     /**
-     * Returns the point the torre involved in the castling will move to
-     * @return where the torre will move
+     * Returns o ponto que a torre invocada no movimento castelo se moverá
+     * @return onde a torre se moverá
      */
     public Point getRookMoveTo() {
         return moveRookTo;
     }
     
     /**
-     * Returns the torre involved in the castling
-     * @return the torre
+     * Returns a torre invocada no movimento castelo
+     * @return a torre
      */
     public Peca getTorre() {
         return torre;

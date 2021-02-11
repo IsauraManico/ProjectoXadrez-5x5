@@ -8,12 +8,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 /*
 
-autor:isaura
 */
 public class Arquivo 
 {
-    public static String Read(String Caminho)
-    {
+    public static String Read(String Caminho){
         String conteudo = "";
         try {
             FileReader arq = new FileReader(Caminho);
@@ -39,18 +37,13 @@ public class Arquivo
     
     public static boolean Write(String Caminho,String Texto)
     {
-        try 
-        {
+        try {
             FileWriter arq = new FileWriter(Caminho);
             PrintWriter gravarArq = new PrintWriter(arq);
-            gravarArq.println(Texto);
+            gravarArq.printf(Texto);
             gravarArq.close();
-            
             return true;
-            
-        }
-        catch(IOException e)
-        {
+        }catch(IOException e){
             System.out.println(e.getMessage());
             return false;
         }

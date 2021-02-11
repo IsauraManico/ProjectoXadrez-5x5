@@ -16,12 +16,14 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListModel;
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 
 /**
  * Um component para jogar e implementar o xadrez
@@ -37,19 +39,15 @@ public class PanelJogo extends JComponent implements MouseListener
     boolean imagensCarregadas = false;
     Peca.Color corIA;
     
-    private JList lista1 ,lista2;
+    public static DefaultListModel<String> l1 ;  
     
-     public static DefaultListModel<String> l1 ;  
-    private DefaultListModel<String> l2 ;  
-         
-   static private JList<String> list ;
-    private JList<String> list1 ;
-    JScrollPane scrollPane ;
+    public static Agente_IA agenteIA;
+    private String moveInvalido="";
+    static String jogada="",jinvalida="";
     
-   
     QuadroXadrez jogoTabuleiro;
     
-    
+    Cavalo c = new Cavalo();
     
     // piece selected by the user
     Peca pecaSelecionada = null;
@@ -64,7 +62,7 @@ public class PanelJogo extends JComponent implements MouseListener
     final Color validMoveColor = new Color(0,255,0,127);
     final Color checkColor = new Color(127,0,255,127);
     final Color lastMovedColor = new Color(0,255,255,75);
-    Color lightColor = new Color(255,255,255);
+    Color lightColor = new Color(255,255,255);//final Color lightColor = new Color(255,255,255,255);
     final Color darkColor = new Color(255,0,0,255);
     
     
@@ -84,32 +82,10 @@ public class PanelJogo extends JComponent implements MouseListener
         novoIAJogo();
         // adds a listener for mouse events
         
-       
        l1 = new DefaultListModel<>();  
-       l2 = new DefaultListModel<>();  
-         
-       list = new JList<>(l1);  
-       list1 = new JList<>(l2);
-          
-       l1.addElement("NEW GAME");
-        list.setBounds(600,30, 300,300);
-        
-        list1.setBounds(500,10, 300,175);
-        l2.addElement("Isaura");
-        
-        //scrollPane = new JScrollPane(list);
-       // scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);  
-        //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);  
-  
-        
-      // scrollPane.setViewportView(list);
-      
-           //this.add(scrollPane);
-          //this.add(list);
-          //this.add(list1);
-         
-      
-        
+       l1.addElement("Start Game WHITE");
+       
+       
         this.addMouseListener(this);
     }    
     
@@ -117,8 +93,7 @@ public class PanelJogo extends JComponent implements MouseListener
      * Configura um novo jogo para 2 jogadores no painel
      */
 
-    public void novoJogo() 
-    {
+    public void novoJogo() {
         //cria um novo tabuleiro
         jogoTabuleiro = new QuadroXadrez(true);
         estado = estadoDoJogo.Started;
@@ -136,55 +111,16 @@ public class PanelJogo extends JComponent implements MouseListener
      */
     public void novoIAJogo()
     {       
-        int profundidadeIA;
-        
-        
-       // cria um JOptionPane para perguntar ao usuário sobre a dificuldade do agente (IA)
-        Object nivel = JOptionPane.showInputDialog(this, "Seleciona o nivel do agente:", 
-                "Novo 1-Jogador jogo",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[] {"Facil", "Normal"},
-                "Facil");
-        
-        // interpreta o resultado JOptionPane 
-        if (nivel == null)
-            return;
-        else
-            if (nivel.toString().equals("Facil"))
-            {
-                profundidadeIA = 2;
-            }
-            else 
-            {
-                 profundidadeIA = 3;
-            }
-           
-        // cria um JOptionPane para pedir ao usuário a cor IA
-        Object color = JOptionPane.showInputDialog(this, "Seleciona a cor do Agente:", 
-                "Novo 1-Jogador jogo",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[] { "Preta", "Branca" },
-                "Preta");
-        
-        // interprets JOptionPane result
-        if (color == null)
-            return;
-        else
-            if (color.toString().equals("Branca"))
-            {
-                 corIA = Peca.Color.branca;
-            }
-            else
-            {
-                 corIA = Peca.Color.preta;
-            }
+        int profundidadeIA=4;
+
+        corIA = Peca.Color.preta;
         
         // cria um novo Jogo
         this.novoJogo();
         // then sets the ai for the board a profundidade do agente e setada aquiiiiii
-        jogoTabuleiro.setAi(new Agente_IA(corIA, profundidadeIA));   //intelligence artificiallll
+        //System.out.println("COR IA: "+corIA);
+        agenteIA=new Agente_IA(corIA, profundidadeIA);
+        jogoTabuleiro.setAi(agenteIA);   //intelligence artificiallll
         
         // simula um evento de clique para solicitar ao IA para fazer o primeiro movimento
         if (corIA == Peca.Color.branca)
@@ -295,56 +231,52 @@ public class PanelJogo extends JComponent implements MouseListener
                 jogoTabuleiro = jogoTabuleiro.getEstadoAnterior().getEstadoAnterior();
             else
                 jogoTabuleiro = jogoTabuleiro.getEstadoAnterior();
-        
-       
         //define o ultimo estado do jogador
         estado = estadoDoJogo.Started;
         
         this.repaint();      
     }
     
+
+
+
+
+
+public String mostrarJList( DefaultListModel<String> l1)
+{
+    StringBuilder sb = new StringBuilder();
+    
+    for ( int i = 0;i<l1.getSize();i++)
+    {
+         sb.append(l1.getElementAt(i));
+         sb.append("\n");
+    }
+   
+    return sb.toString();
+}
      /**
      * Salva o estado do quadro no Arquivo
      */
     public void saveBoard() {
         try {
-            // pergunta ao usuario o nome do arquivo a ser salvo
-            String nomeArquivo = JOptionPane.showInputDialog("Insira o nome do player white: ");
-            String nomeArquivo1 = JOptionPane.showInputDialog("Insira o nome do player black: ");
-            
-            
-           
-           
-            // se o nome do prompt nao foi preenchido sai
-            if (nomeArquivo == null)
-            {
-                return;
-            }
-                
 
-            // check that the saves folder exists
+            // verifica se esta pasta exist
             File diretorio = new File("SALVOS");
             // creates folder if it doesn't exist
             if (!diretorio.exists())
                 diretorio.mkdir();
 
-           
-             if(Arquivo.Write("SALVOS/"+nomeArquivo+".txt",l1.toString()+"\n"))
-                     {
-                         System.out.println("Salvo com sucesso");
-                     }
-              if(Arquivo.Write("SALVOS/"+nomeArquivo1+".txt",Agente_IA.l1.toString()+"\n"))
-                     {
-                         System.out.println(" arquivo 2 Salvo com sucesso");
-                     }
-            
-            
+            if(Arquivo.Write("SALVOS/player2.txt",agenteIA.l1.toString())){
+                System.out.println("ARQUIVO SALVO Humano");
+            }
+            if(Arquivo.Write("SALVOS/player1.txt",l1.toString())){
+                System.out.println("ARQUIVO SALVO Agente");
+            }
+
         } catch (Exception e) {
             // in case of an exception
-            String message = "Could not save game. " +
-                    "Ensure that a valid filename was given.\n\n" +
-                    "Error details: " + e.getMessage();
-            // inform the user, give exception details
+            String message = "Não pode guardar o jogo. " +e.getMessage();
+            // Informa ao usuario, detalhes do erro
             JOptionPane.showMessageDialog(this,
                     message, "Error!",
                     JOptionPane.ERROR_MESSAGE);    
@@ -352,8 +284,7 @@ public class PanelJogo extends JComponent implements MouseListener
     }  
     
    
-    private void carregamentoDeImagens()
-    {
+    private void carregamentoDeImagens(){
         try {
            // inicializa duas matrizes de bufferedImages
             BufferedImage[] imagensBrancas = new BufferedImage[6];            
@@ -414,12 +345,8 @@ public class PanelJogo extends JComponent implements MouseListener
         {
             estado = estadoDoJogo.Error;
             // create a message to inform the use about the error
-            String message = "Nao foi possivel carregar as imagens da peca. " +
-                    "Check that all 12 images exist in the PIECES folder " +
-                    "and are accessible to the program.\n" +
-                    "The program will not function properly until this is resolved.\n\n" +
-                    "Error details: " + e.getMessage();
-            // display the message
+            String message = "Nao foi possivel carregar as imagens da peca. " + e.getMessage();
+            // mostrar a mensagem
             JOptionPane.showMessageDialog(this, message, "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -440,10 +367,6 @@ public class PanelJogo extends JComponent implements MouseListener
             
             int w = getWidth();
             int h = getHeight();
-            
-            //System.out.println("w"+this.getWidth());
-            //System.out.println("h"+this.getHeight());
-
             // responder à ação do jogador
             if (jogoTabuleiro.getAi() == null || 
                 jogoTabuleiro.getAi().getColor() != jogoTabuleiro.getVirar())
@@ -451,14 +374,7 @@ public class PanelJogo extends JComponent implements MouseListener
                 // transforma as coordenadas do clique do mouse em coordenadas do tabuleiro
                 Point boardPt = new Point(e.getPoint().x / (w / DIM),  
                         e.getPoint().y / (h / DIM)); 
-                
-                       // String res = "Jogador Black";
-                        
-                        //clicado=boardPt;
-                        //this.mostrarMove(boardPt);
                       
-                       
-                       
                 //  se nenhuma peça foi selecionada ainda
                 if(pecaSelecionada == null)
                 {
@@ -485,23 +401,19 @@ public class PanelJogo extends JComponent implements MouseListener
                   // em caso afirmativo, execute esse movimento
                     if (playerMove != null) 
                     {
-                        if(corIA == Peca.Color.branca){
-                            l1.addElement("BLACK -> "+this.mostrarMove(playerMove.getPiece().getLocalizacao())
-                            +" - "+this.mostrarMove(playerMove.getMoveTo()));
-                        }
-                        else{
-                            l1.addElement("WHITE -> "+this.mostrarMove(playerMove.getPiece().getLocalizacao())
-                            +" - "+this.mostrarMove(playerMove.getMoveTo()));
-                        }
-                        
-                        
-                        
+                        jogada="White payed "+this.mostrarMove(playerMove.getPiece().getLocalizacao())
+                            +this.mostrarMove(playerMove.getMoveTo());
+                            l1.addElement(agenteIA.jogada);
+                            l1.addElement(this.mostrarMove(playerMove.getPiece().getLocalizacao())
+                            +this.mostrarMove(playerMove.getMoveTo())); 
+                            agenteIA.l1.addElement(jogada);
+                            
                         jogoTabuleiro.mova(playerMove, true);
                         pecaSelecionada = null;
                         okMoves = null;
                     } else {
                    // caso contrário, ignore o clique e redefina as variáveis
-                    
+                        l1.addElement(moveInvalido+this.mostrarMove(boardPt));
                         pecaSelecionada = null;
                         okMoves = null;
                     }
@@ -538,6 +450,8 @@ public class PanelJogo extends JComponent implements MouseListener
 
                 if (jogoTabuleiro.getPecaEmCheck() == null) {
                     estado = estadoDoJogo.Stalemate;
+                    l1.addElement("EMPATE");
+                    agenteIA.l1.addElement("EMPATE");
                     JOptionPane.showMessageDialog(this,
                             "Empate!!",
                             "",
@@ -545,14 +459,28 @@ public class PanelJogo extends JComponent implements MouseListener
                 } else {
                 // if a king esta em  check, checkmate
                     estado = estadoDoJogo.Checkmate; 
+                    l1.addElement("CHEQUE MATE");
+                    agenteIA.l1.addElement("CHEQUE MATE");
                     JOptionPane.showMessageDialog(this,
-                            "Checkmate!",
+                            "Cheque mate!",
                             "",
                             JOptionPane.INFORMATION_MESSAGE);
+                }  
+                
+                //Guardar o jogo em dois arquivos de texto
+                
+                File diretorio = new File("SALVOS");
+                // creates folder if it doesn't exist
+                if (!diretorio.exists())
+                    diretorio.mkdir();
+
+                if(Arquivo.Write("SALVOS/player2.txt",agenteIA.l1.toString()+"\n")){
+                    System.out.println("Player1 Salvo!");
                 }
-                   
+                if(Arquivo.Write("SALVOS/player1.txt",l1.toString()+"\n")){
+                    System.out.println("Player2 salvo!");
+                }
             }
-            
             this.repaint(); // chama o paintComponent
         }       
     }
@@ -566,10 +494,6 @@ public class PanelJogo extends JComponent implements MouseListener
         // qudrado height and width
         int sW = w / DIM;
         int sH = h / DIM;
-        
-     
-       //  Agente_IA a1 = new Agente_IA();
-        //System.out.println("Valor peca:"+ Agente_IA.valorDaPeca(c));
         
       // cria um buffer fora da tela
         Image buffer = createImage(w, h);
@@ -617,125 +541,58 @@ public class PanelJogo extends JComponent implements MouseListener
 
     public static String mostrarMove(Point x)
     {
-        
-       
-                        if(x.x == 0 && x.y == 0)
-                        {
-                            return "a5";
-                            
-                        }
-                        else if(x.x  == 1 && x.y == 0)
-                       {
-                           return ("b5");
-                          
-                           
-                       }
-                        else if(x.x == 2 && x.y == 0)
-                       {
-                           return ("c5");
-                       }
-                        else if(x.x == 3 && x.y == 0)
-                       {
-                           return ("d5");
-                       }
-                        else if(x.x == 4 && x.y == 0)
-                       {
-                           return ("e5");
-                       }
-                       
-                       //////////////////////////////////////////////////
-                        else if(x.x == 0 && x.y == 1)
-                        {
-                            return ("a4");
-                        }
-                        else if(x.x  == 1 && x.y == 1)
-                       {
-                           return ("b4");
-                       }
-                        else if(x.x == 2 && x.y == 1)
-                       {
-                           return "c4";
-                       }
-                        else if(x.x == 3 && x.y == 1)
-                       {
-                           return ("d4");
-                       }
-                        else if(x.x== 4 && x.y == 1)   
-                       {
-                           return ("e4");
-                       }
-                       /////////////////////////////////////////
-                        else if(x.x== 0 && x.y== 2)
-                        {
-                            return ("a3");
-                        }
-                        else if(x.x == 1 && x.y== 2)
-                       {
-                           return ("b3");
-                       }
-                        else if(x.x== 2 && x.y== 2)
-                       {
-                           return ("c3");
-                       }
-                        else if(x.x== 3 && x.y== 2)
-                       {
-                           return ("d3");
-                       }
-                        else if(x.x== 4 && x.y== 2)
-                       {
-                           return("e3");
-                       }
-                       
-                       //////////////////////////////////////////////
-                       
-                        else if(x.x== 0 && x.y== 3)
-                        {
-                            return ("a2");
-                        }
-                        else if(x.x == 1 && x.y== 3)
-                       {
-                           return ("b2");
-                       }
-                        else if(x.x== 2 && x.y== 3)
-                       {
-                          return ("c2");
-                       }
-                        else if(x.x==3&& x.y== 3)
-                       {
-                           return ("d2");
-                       }
-                        else if(x.x== 4 && x.y== 3)
-                       {
-                           return ("e2");
-                           
-                       }
-                       /////////////////////////////////////////
-                       
-                        else if(x.x == 0 && x.y == 4)
-                        {
-                            return ("a1");
-                        }
-                        else if(x.x  == 1 && x.y == 4)
-                       {
-                           return ("b1");
-                       }
-                        else if(x.x == 2 && x.y == 4)
-                       {
-                           return ("c1");
-                       }
-                        else if(x.x == 3 && x.y == 4)
-                       {
-                           return ("d1");
-                       }
-                        else if(x.x == 4 && x.y == 4)
-                       {
-                           return ("e1");
-                       }
-                        else
-                            return "";
-                       
-       
-        
+        if(x.x == 0 && x.y == 0)
+            return "a5";                        
+        else if(x.x  == 1 && x.y == 0)
+            return ("b5");
+        else if(x.x == 2 && x.y == 0)
+            return ("c5");
+        else if(x.x == 3 && x.y == 0)
+            return ("d5");
+        else if(x.x == 4 && x.y == 0)
+            return ("e5");
+        else if(x.x == 0 && x.y == 1)
+            return ("a4");
+        else if(x.x  == 1 && x.y == 1)
+            return ("b4");
+        else if(x.x == 2 && x.y == 1)
+            return "c4";
+        else if(x.x == 3 && x.y == 1)
+            return ("d4");
+        else if(x.x== 4 && x.y == 1)   
+            return ("e4");
+        else if(x.x== 0 && x.y== 2)
+            return ("a3");
+        else if(x.x == 1 && x.y== 2)
+            return ("b3");
+        else if(x.x== 2 && x.y== 2)
+            return ("c3");
+        else if(x.x== 3 && x.y== 2)
+            return ("d3");
+        else if(x.x== 4 && x.y== 2)
+            return("e3");
+        else if(x.x== 0 && x.y== 3)
+            return ("a2");
+        else if(x.x == 1 && x.y== 3)
+            return ("b2");
+        else if(x.x== 2 && x.y== 3)
+            return ("c2");
+        else if(x.x==3 && x.y== 3)
+            return ("d2");
+        else if(x.x== 4 && x.y== 3)
+            return ("e2");
+        else if(x.x == 0 && x.y == 4)
+            return ("a1");
+        else if(x.x  == 1 && x.y == 4)
+            return ("b1");
+        else if(x.x == 2 && x.y == 4)
+            return ("c1");
+        else if(x.x == 3 && x.y == 4)
+            return ("d1");
+        else if(x.x == 4 && x.y == 4)
+            return ("e1");
+        else
+            return "ForaTabuleiro"; 
     }
     private void drawHelperCircles(Graphics g, int sW, int sH) {
         // if a piece is selected
@@ -791,7 +648,7 @@ Desenha peças para o objeto gráfico
             if(pc.getColor() == Peca.Color.branca) {
               // desenha sua imagem branca
                 g.drawImage(pc.getWhiteImage(), pc.getLocalizacao().x * sW,
-                        pc.getLocalizacao().y * sH, sW, sH, null);//sH-300 para subir em tabuleiro 5*5
+                        pc.getLocalizacao().y * sH, sW, sH, null);
             } else {
                 // desenhe sua imagem preta
                 g.drawImage(pc.getBlackImage(), pc.getLocalizacao().x * sW,
@@ -811,13 +668,13 @@ Desenha peças para o objeto gráfico
     private void tabuleiroDesenho(Graphics g, int sW, int sH) {
        // desenha um fundo claro
         g.setColor(lightColor);
-        g.fillRect(0, 0, sW * 5, sH *5); //8 8
+        g.fillRect(0, 0, sW * 5, sH *5);
         
         
         boolean dark = false;
         g.setColor(darkColor);
         // desenha quadrados vermelhos
-        for(int y = 0; y < 5; y++) { //8
+        for(int y = 0; y < 5; y++) { 
             for(int x = 0; x <4; x++) {
                 if(dark) {
                     g.fillRect(x * sW, y * sH, sW, sH);
@@ -826,6 +683,10 @@ Desenha peças para o objeto gráfico
             }         
             dark = !dark;
         }
+        g.fillRect(4*sH, 1*sW, sW, sH);
+        g.fillRect(4*sH, 3*sW, sW, sH);
+        
+        
     }  
     
     /**
@@ -833,29 +694,26 @@ Desenha peças para o objeto gráfico
      * @param pt ponto a procurar
      * @return mover com destino no pt
      */
-    private Move MovimentoComDestino(Point pt) 
-    {
-        Move i=null;
+    private Move MovimentoComDestino(Point pt) {
+        boolean jaGuardou=false;
         for(Move m : okMoves){
-            if(m.getMoveTo().equals(pt))
-            {
+            if(m.getMoveTo().equals(pt)) {
                 return m;
-            }
-            else
-            {
-                i=m;
-                l1.addElement("Move Invalido ->"+this.mostrarMove(i.getPiece().
-                        getLocalizacao()));
-                 /*System.out.println("Move Invalido ->"+this.mostrarMove(i.getPiece().
-                         getLocalizacao()));*/
-                
-            }
+            }   
+            else{ 
+                if(jaGuardou==false){
+                    moveInvalido="Ilegal move "+this.mostrarMove(m.getPiece().getLocalizacao());
+                    jaGuardou=true;
+                }
+            }    
         } 
-        
-       
-//        l1.addElement("Move Invalido ->"+this.mostrarMove(i.getPiece().getLocalizacao()));
+        jaGuardou=false;
         return null;
     }    
+    
+    public static DefaultListModel lista(){
+        return l1;
+    }
     
     public void mouseExited(MouseEvent e) { }    
    

@@ -1,0 +1,1 @@
+[Start Game BLACK, White payed a2a3, b4b3, White payed c2b3, c4b3, White payed d2d3, e4e3, White payed d1b3, d5b3, White payed c1e3, b3b2, White payed e1d1, d4e3, White payed d3d4, e5d4, White payed b1c3, b2d2, CHEQUE MATE]

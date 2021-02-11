@@ -1,5 +1,6 @@
 package chess;
 
+import java.awt.Point;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -13,21 +14,28 @@ import javax.swing.DefaultListModel;
 public class Agente_IA implements Serializable
 {
     
-     public static DefaultListModel<String>l1 = new DefaultListModel<>();  
-     
+    
     private Peca.Color iaCor;
     private int profundidade;
-    static Move melhorMovimento = null;
+    public static  Move melhorMovimento = null;
+    public static DefaultListModel<String> l1 ;
+
+    static String jogada="";
 
     public Agente_IA()
     {
         
     }
-   
-    public Agente_IA(Peca.Color color, int depth) 
-    {
+    /**
+     * Cria um novo objeto do Agente
+     * @param color
+     * @param depth
+     */
+    public Agente_IA(Peca.Color color, int depth) {
         this.iaCor = color;
         this.profundidade = depth;
+        l1 = new DefaultListModel<>(); 
+        l1.addElement("Start Game BLACK");
     }
     
     /**
@@ -48,8 +56,9 @@ public class Agente_IA implements Serializable
      */
 
 
-    public  Move getMove(QuadroXadrez jogo)
+    public Move getMove(QuadroXadrez jogo)
     {     
+        //System.out.println("COR IA: "+iaCor);
         // se um movimento do quadro esta vazio, return null
         if (jogo == null)
             return null;
@@ -59,73 +68,26 @@ public class Agente_IA implements Serializable
         // inicializa melhor valor and melhor movimentos das variaveis
         int melhorValor = Integer.MIN_VALUE;
         
-        
+       
         
         // obtenha o melhor movimento para o IA (máximo) a partir dos movimentos disponíveis
         for (Move m : getMoves(jogo))
         {
             // obtenha o valor do movimento (min)
-            int moveValor = min(jogo.tentaMover(m), profundidade - 1, melhorValor,
-                                Integer.MAX_VALUE);
+            int moveValor = min(jogo.tentaMover(m), profundidade - 1, melhorValor, Integer.MAX_VALUE);
             
             // se o valor for> do que bestValue, o movimento atual é melhor
-            if (moveValor > melhorValor || melhorValor == Integer.MIN_VALUE) 
-            {
+            if (moveValor > melhorValor || melhorValor == Integer.MIN_VALUE) {
                 melhorValor = moveValor;
                 melhorMovimento = m;
-                   
-             
             }
-           
         }
-        
-        if(iaCor == Peca.Color.branca )
-        {
-            l1.addElement("WHITE -> "+PanelJogo.mostrarMove
-                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
-                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
-        }
-        else if( iaCor == Peca.Color.preta)
-        {
-             l1.addElement("BLACK -> "+PanelJogo.mostrarMove
-                                (melhorMovimento.getPiece().getLocalizacao())+" - "+
-                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
-        }
-       
-       
-     //ver();
-        
+         
+        l1.addElement(mostrarMove(melhorMovimento.getPiece().getLocalizacao())+
+                    mostrarMove(melhorMovimento.getMoveTo()));
+        jogada="Black payed "+mostrarMove(melhorMovimento.getPiece().getLocalizacao())+
+                    mostrarMove(melhorMovimento.getMoveTo());
         return melhorMovimento;
-        
-    }
-    
-    
-    
-    public void ver( )
-    {
-       
-        
-        
-        if( iaCor == Peca.Color.preta)
-        {
-             PanelJogo.l1.addElement("PRETA -> "+PanelJogo.mostrarMove
-                                (melhorMovimento.getPiece().getLocalizacao())+" - "+
-                   PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
-        }
-        else
-        {//(iaCor == Peca.Color.branca )
-      
-            /*PanelJogo.l1.addElement("WHITE -> "+PanelJogo.mostrarMove
-                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
-                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));*/
-            
-            System.out.println("Branca"+PanelJogo.mostrarMove
-                            (melhorMovimento.getPiece().getLocalizacao())+" - "+
-                    PanelJogo.mostrarMove(melhorMovimento.getMoveTo()));
-        
-        }
-        
-        
     }
     
    /**
@@ -237,8 +199,7 @@ public class Agente_IA implements Serializable
      * @param gameBoard QuadroXadrez to evaluate
      * @return value of the QuadroXadrez
      */
-    private int valorQuadroXadrez(QuadroXadrez gameBoard)
-    {
+    private int valorQuadroXadrez(QuadroXadrez gameBoard) {
         int valor = 0;
         int iaPecas = 0;
         int iaMoves = 0;
@@ -296,8 +257,6 @@ public class Agente_IA implements Serializable
         else if (gameBoard.getVirar() != iaCor && MovimentoJogador == 0)
            // se o jogador não puder fazer mais movimentos, nós ganhamos. isso é bom.
             valor = Integer.MAX_VALUE;  //chave do projeto
-        
-
         return valor;
     }
        
@@ -306,8 +265,131 @@ public class Agente_IA implements Serializable
      * peça @param pc para avaliar
      * @valor de retorno da peça
      */
-    public static  int valorDaPeca(Peca pc)
-    {
+    public static  int valorDaPeca(Peca pc) {
         return (int)Math.pow(pc.getNumImagem() + 1, 3) * 100;
     }
+    
+    
+
+    public String mostrarMove(Point x)
+    {
+                        if(x.x == 0 && x.y == 0)
+                        {
+                            return "a5";
+                            
+                        }
+                        else if(x.x  == 1 && x.y == 0)
+                       {
+                           return ("b5");
+                          
+                           
+                       }
+                        else if(x.x == 2 && x.y == 0)
+                       {
+                           return ("c5");
+                       }
+                        else if(x.x == 3 && x.y == 0)
+                       {
+                           return ("d5");
+                       }
+                        else if(x.x == 4 && x.y == 0)
+                       {
+                           return ("e5");
+                       }
+                       
+                       //////////////////////////////////////////////////
+                        else if(x.x == 0 && x.y == 1)
+                        {
+                            return ("a4");
+                        }
+                        else if(x.x  == 1 && x.y == 1)
+                       {
+                           return ("b4");
+                       }
+                        else if(x.x == 2 && x.y == 1)
+                       {
+                           return "c4";
+                       }
+                        else if(x.x == 3 && x.y == 1)
+                       {
+                           return ("d4");
+                       }
+                        else if(x.x== 4 && x.y == 1)   
+                       {
+                           return ("e4");
+                       }
+                       /////////////////////////////////////////
+                        else if(x.x== 0 && x.y== 2)
+                        {
+                            return ("a3");
+                        }
+                        else if(x.x == 1 && x.y== 2)
+                       {
+                           return ("b3");
+                       }
+                        else if(x.x== 2 && x.y== 2)
+                       {
+                           return ("c3");
+                       }
+                        else if(x.x== 3 && x.y== 2)
+                       {
+                           return ("d3");
+                       }
+                        else if(x.x== 4 && x.y== 2)
+                       {
+                           return("e3");
+                       }
+                       
+                       //////////////////////////////////////////////
+                       
+                        else if(x.x== 0 && x.y== 3)
+                        {
+                            return ("a2");
+                        }
+                        else if(x.x == 1 && x.y== 3)
+                       {
+                           return ("b2");
+                       }
+                        else if(x.x== 2 && x.y== 3)
+                       {
+                          return ("c2");
+                       }
+                        else if(x.x==3&& x.y== 3)
+                       {
+                           return ("d2");
+                       }
+                        else if(x.x== 4 && x.y== 3)
+                       {
+                           return ("e2");
+                           
+                       }
+                       /////////////////////////////////////////
+                       
+                        else if(x.x == 0 && x.y == 4)
+                        {
+                            return ("a1");
+                        }
+                        else if(x.x  == 1 && x.y == 4)
+                       {
+                           return ("b1");
+                       }
+                        else if(x.x == 2 && x.y == 4)
+                       {
+                           return ("c1");
+                       }
+                        else if(x.x == 3 && x.y == 4)
+                       {
+                           return ("d1");
+                       }
+                        else if(x.x == 4 && x.y == 4)
+                       {
+                           return ("e1");
+                       }
+                        else
+                            return "ForaTabuleiro";
+                       
+       
+        
+    }
+    
 }
