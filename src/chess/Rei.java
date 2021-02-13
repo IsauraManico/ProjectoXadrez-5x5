@@ -115,9 +115,9 @@ public class Rei extends Peca{
                 for(Peca p : okRooks) {
                     boolean canCastle = true;
                     // if on right side of board
-                    if (p.getLocalizacao().x == 7) {
+                    if (p.getLocalizacao().x == 4) {
                         // if there are pieces between the king and the rook
-                        for(int ix = this.localizacao.x + 1; ix < 7; ix++) {
+                        for(int ix = this.localizacao.x + 1; ix < 4; ix++) {
                             if (board.getPieceAt(new Point(ix, y)) != null) {
                                 // castling is not possible
                                 canCastle = false;

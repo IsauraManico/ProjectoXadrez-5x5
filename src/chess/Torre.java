@@ -9,52 +9,30 @@ public class Torre extends Peca{
        
     private final int imageNumber = 3;
     
-    /**
-     * Creates a new rook
-     * @param location localizacao of the piece
-     * @param color color of the piece
-     */
+   
     public Torre(Point location, Color color) {
         this.numMoves = 0;
         this.color = color;
         this.localizacao = location;
     }
 
-    /**
-     * Private constructor used for making copies of the piece
-     * @param location localizacao of the piece
-     * @param color color of the piece
-     * @param moves the number of moves made by the piece
-     */
+   
     private Torre(Point location, Color color, int moves) {
         this.numMoves = moves;
         this.color = color;
         this.localizacao = location;
     }
-    
-    /**
-     * Returns the index of the Peca's image in an array.
-     *  Can be used for determining the relative value of the piece.
-     *  Pieces have the following indices:
-     *  [0]:pawn [1]:knight [2]:bishop [3]:rook [4]:queen [5]:king
-     * @return array index
-     */
+   
     public int getNumImagem() {
         return imageNumber;
     }
 
-    /**
-     * Returns the white image for this piece
-     * @return white image
-     */
+   
     public BufferedImage getWhiteImage() {
         return imagensBrancas[imageNumber];
     }
     
-    /**
-     * Returns the black image for this piece
-     * @return black image
-     */
+  
     public BufferedImage getBlackImage() {
         return imagensPretas[imageNumber];
     }
@@ -101,12 +79,7 @@ public class Torre extends Peca{
         return moves;
     }
     
-    /**
-     * Adds valid moves in a straight line to the list
-     * @param moves list to add to
-     * @param xi x direction (-1/0/1)
-     * @param yi y direction (-1/0/1)
-     */
+   
     private void addMovesInLine(QuadroXadrez board, List<Move> moves, int xi, int yi) {
         int x = localizacao.x;
         int y = localizacao.y;

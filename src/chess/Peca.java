@@ -9,7 +9,8 @@ public abstract class Peca implements Serializable, Cloneable
 {
     public static enum Color {branca, preta};
 
-    // [0]:pawn [1]:knight [2]:bishop [3]:rook [4]:queen [5]:king
+    // [0]:pawn [1]:knight [2]:bishop 
+    // [3]:rook [4]:queen  [5]:king  
     protected static BufferedImage[] imagensBrancas;
     protected static BufferedImage[] imagensPretas;
     

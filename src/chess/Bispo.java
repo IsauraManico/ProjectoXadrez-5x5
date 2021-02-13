@@ -17,14 +17,8 @@ public class Bispo extends Peca
     
    
     
-    
-    
-    /**
-     * Creates a new bishop
-     * @param location localizacao of the piece
-     * @param color color of the piece
-     */
-    public Bispo(Point location, Color color) {
+    public Bispo(Point location, Color color)
+    {
         this.numMoves = 0;
         this.color = color;
         this.localizacao = location;

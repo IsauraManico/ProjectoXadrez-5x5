@@ -63,7 +63,7 @@ public class QuadroXadrez implements Serializable, Cloneable
         if (iniciarPecas)
         {        
            
-            //pecas pretas.........................................................
+            //pecas pretas.................................................
             
             pecas.add(new Rainha(new Point(3, 0), Peca.Color.preta));//3
             pecas.add(new Rei(new Point(4, 0), Peca.Color.preta));//4
@@ -78,7 +78,7 @@ public class QuadroXadrez implements Serializable, Cloneable
             pecas.add(new Peao(new Point(4, 1), Peca.Color.preta));
           
 
-            //  pecas brancas.......................................................
+            //  pecas brancas.............................................
          
             pecas.add(new Torre(new Point(0, 4), Peca.Color.branca));
             pecas.add(new Cavalo(new Point(1, 4), Peca.Color.branca));
@@ -208,24 +208,24 @@ public class QuadroXadrez implements Serializable, Cloneable
        // se o movimento for roque
         if (m instanceof MovimentoCastelo) {
             MovimentoCastelo c = (MovimentoCastelo)m;
-            c.getPiece().moveTo(c.getMoveTo());
+            c.getPeca().moveTo(c.getMoveTo());
             c.getTorre().moveTo(c.getRookMoveTo());
         } else {
-            if(m.getCaptured() != null);
-                this.removePeca(m.getCaptured());
+            if(m.getCapturada() != null);
+                this.removePeca(m.getCapturada());
             
             // Implementando a regra en passant
-            if (m.getPiece() instanceof Peao)
-                if (Math.abs(m.getPiece().getLocalizacao().y - m.getMoveTo().y) == 2) //2
-                    ((Peao)m.getPiece()).enPassantOk = true;                
+            if (m.getPeca() instanceof Peao)
+                if (Math.abs(m.getPeca().getLocalizacao().y - m.getMoveTo().y) == 2) //2
+                    ((Peao)m.getPeca()).enPassantOk = true;                
             
-            m.getPiece().moveTo(m.getMoveTo());    
+            m.getPeca().moveTo(m.getMoveTo());    
             
             // promove o peão se alcançar a classificação final
-            checkPromocaoDoPeao(m.getPiece(), playerMove);
+            checkPromocaoDoPeao(m.getPeca(), playerMove);
         }
         
-        this.ultimoMovido = m.getPiece();
+        this.ultimoMovido = m.getPeca();
         this.emCheck = reiEstaEmCheck();
         
       // muda a cor das pecas movendo-se a seguir
@@ -297,7 +297,7 @@ public class QuadroXadrez implements Serializable, Cloneable
         if (m instanceof MovimentoCastelo) {
            // cria uma cópia do movimento para o tabuleiro copiado
             MovimentoCastelo c = (MovimentoCastelo)m;
-            Peca rei = ajudante.getPieceAt(c.getPiece().getLocalizacao());
+            Peca rei = ajudante.getPieceAt(c.getPeca().getLocalizacao());
             Peca torre = ajudante.getPieceAt(c.getTorre().getLocalizacao());
             
            // executa o movimento no tabuleiro copiado
@@ -306,10 +306,10 @@ public class QuadroXadrez implements Serializable, Cloneable
         } else {       
            // cria uma cópia do movimento para o tabuleiro copiado
             Peca capture = null;
-            if(m.getCaptured() != null)
-                capture = ajudante.getPieceAt(m.getCaptured().getLocalizacao());
+            if(m.getCapturada() != null)
+                capture = ajudante.getPieceAt(m.getCapturada().getLocalizacao());
 
-            Peca movendo = ajudante.getPieceAt(m.getPiece().getLocalizacao());
+            Peca movendo = ajudante.getPieceAt(m.getPeca().getLocalizacao());
 
             // performs the move on the copied board
             ajudante.mova(new Move(movendo,
@@ -332,11 +332,11 @@ public class QuadroXadrez implements Serializable, Cloneable
            // passa por todos os movimentos que podem ser feitos pela peça
             for(Move mv : pc.getValidMoves(this, false))
                 // se um movimento resultasse na captura de um rei
-                if (mv.getCaptured() instanceof Rei) {
+                if (mv.getCapturada() instanceof Rei) {
                     // aquele rei está em xeque
-                    this.emCheck = mv.getCaptured();
+                    this.emCheck = mv.getCapturada();
                     //return isto
-                    return mv.getCaptured();
+                    return mv.getCapturada();
                 }
         return null;
     }
@@ -364,7 +364,7 @@ public class QuadroXadrez implements Serializable, Cloneable
                 for(Move mv : pc.getValidMoves(ajudante, false))
                   // se um movimento resultasse na captura de um rei
 
-                    if (mv.getCaptured() instanceof Rei) 
+                    if (mv.getCapturada() instanceof Rei) 
                         return true;
         return false;
     }
@@ -377,8 +377,6 @@ public class QuadroXadrez implements Serializable, Cloneable
     public boolean gameOver() {
         // cria um array para todos os movimentos que podem ser feitos por
         // peças pretas, peças brancas
-
-
         List<Move> whiteMoves = new ArrayList<Move>();
         List<Move> blackMoves = new ArrayList<Move>();
         
@@ -388,21 +386,15 @@ public class QuadroXadrez implements Serializable, Cloneable
             if(p.getColor() == Peca.Color.branca)
             {
                 whiteMoves.addAll(p.getValidMoves(this, true));
-                
-                // System.out.println("Movimentos Pecas Brancas:"+whiteMoves);
-                
-            }
-               
+                // System.out.println("Movimentos Pecas Brancas:"+whiteMoves);   
+            }  
             else
             {
                 blackMoves.addAll(p.getValidMoves(this, true));
                // System.out.println("Movimentos Pecas Pretas:"+blackMoves);
             }
         }
-        
        // se nenhum dos lados puder fazer movimentos válidos, o jogo acabou
-
-
         return (whiteMoves.size() == 0 || blackMoves.size() == 0);
     }
     

@@ -1,5 +1,6 @@
 package chess;
 
+
 import java.awt.Point;
 import java.util.List;
 import java.util.ArrayList;
@@ -14,23 +15,19 @@ import javax.swing.DefaultListModel;
 public class Agente_IA implements Serializable
 {
     
-    
     private Peca.Color iaCor;
     private int profundidade;
     public static  Move melhorMovimento = null;
     public static DefaultListModel<String> l1 ;
-
+    int valor=0;
+    public static int custo=0;
     static String jogada="";
 
     public Agente_IA()
     {
         
     }
-    /**
-     * Cria um novo objeto do Agente
-     * @param color
-     * @param depth
-     */
+   
     public Agente_IA(Peca.Color color, int depth) {
         this.iaCor = color;
         this.profundidade = depth;
@@ -47,14 +44,7 @@ public class Agente_IA implements Serializable
         return iaCor;
     }
     
-   /**
-     * Retorna um movimento para o agente fazer com base em um algoritmo min / max
-     * com poda alfa-beta. Com base na explicação genérica de pseudocódigo de
-     * algoritmo de http://ai-depot.com/articles/minimax-explained/
-     * @param jogo estado atual do tabuleiro
-     * @return melhor jogada
-     */
-
+ 
 
     public Move getMove(QuadroXadrez jogo)
     {     
@@ -74,19 +64,19 @@ public class Agente_IA implements Serializable
         for (Move m : getMoves(jogo))
         {
             // obtenha o valor do movimento (min)
-            int moveValor = min(jogo.tentaMover(m), profundidade - 1, melhorValor, Integer.MAX_VALUE);
-            
+            int moveValor = min( jogo.tentaMover(m), profundidade - 1, melhorValor, Integer.MAX_VALUE);
             // se o valor for> do que bestValue, o movimento atual é melhor
+            //System.out.println("Valor(beta): "+moveValor);
             if (moveValor > melhorValor || melhorValor == Integer.MIN_VALUE) {
                 melhorValor = moveValor;
                 melhorMovimento = m;
             }
         }
-         
-        l1.addElement(mostrarMove(melhorMovimento.getPiece().getLocalizacao())+
+        l1.addElement(mostrarMove(melhorMovimento.getPeca().getLocalizacao())+
                     mostrarMove(melhorMovimento.getMoveTo()));
-        jogada="Black payed "+mostrarMove(melhorMovimento.getPiece().getLocalizacao())+
+        jogada="Black payed "+mostrarMove(melhorMovimento.getPeca().getLocalizacao())+
                     mostrarMove(melhorMovimento.getMoveTo());
+        custo+=valorDaPeca(melhorMovimento.getPeca());
         return melhorMovimento;
     }
     
@@ -100,8 +90,11 @@ public class Agente_IA implements Serializable
      */
     private int max(QuadroXadrez game, int depth, int alpha, int beta) {
         // termina a pesquisa se o jogo acabou ou o limite de profundidade foi atingido
-        if (depth == 0)
-            return valorQuadroXadrez(game);
+        if (depth == 0){
+            valor=valorQuadroXadrez(game);
+           // System.out.println("ValorMax : "+valor);
+            return valor;
+        }
 
         List<Move> possiveisMovimentos = getMoves(game);
         // se nenhum movimento puder ser feito, o jogo terminou
@@ -124,11 +117,10 @@ public class Agente_IA implements Serializable
             // método) então sabemos que o método min não escolherá este
             // caminho e podemos parar a busca
 
-
             if (alpha >= beta)
                 return alpha;
         }
-
+        //System.out.println("Alfa : "+alpha);
         return alpha;
     }
     
@@ -142,22 +134,20 @@ public class Agente_IA implements Serializable
 
 
      */
-    private int min(QuadroXadrez game, int depth, int alpha, int beta) {
+    private int min(QuadroXadrez game, int depth, int alpha, int beta)
+    {
         // fim da pesquisa se o jogo acabou ou o limite de profundidade atingido
         if (depth == 0)
-            return valorQuadroXadrez(game);
-
+        {
+            int i=valorQuadroXadrez(game);
+            System.out.println("ValorMin : "+i);
+            return i;
+        }           
         List<Move> possiblidadesMove = getMoves(game);
-
         // se nenhum movimento puder ser feito, o jogo terminou
-
-
         if (possiblidadesMove.size() == 0)
             return valorQuadroXadrez(game);
-
        // obtém a melhor jogada para o jogador (min) a partir das jogadas disponíveis
-
-
         for(Move m : possiblidadesMove) {
             int moveValue = max(game.tentaMover(m), depth - 1, alpha, beta);
             if (moveValue < beta) {
@@ -168,19 +158,19 @@ public class Agente_IA implements Serializable
             // valor (melhor movimento encontrado para o oponente por este método) então
             // sabemos que o método max não vai escolher este caminho e nós
             // pode parar a pesquisa.
-
-        if (alpha >= beta)
-                        return beta;
-                }       
+            if (alpha >= beta)
                 return beta;
-            }
+        }
+        return beta;
+}
 
     /**
      * Retorna todos os movimentos possíveis para o tabuleiro.
      * @param jogo QuadroXadrez para obter movimentos para
      * @return lista de movimentos possíveis.
      */
-    private List<Move> getMoves(QuadroXadrez game) {
+    private List<Move> getMoves(QuadroXadrez game)
+    {
         // inicializa um arraylist
         List<Move> moves = new ArrayList<Move>();
         
@@ -223,9 +213,9 @@ public class Agente_IA implements Serializable
                     for(Move m : moveValidos) {
                        // contabiliza quantos movimentos podem ser feitos
                         iaMoves++;
-                        if (m.getCaptured() != null) {
+                        if (m.getCapturada() != null) {
                             // conta para possíveis capturas
-                            iaCapturas += valorDaPeca(m.getCaptured());
+                            iaCapturas += valorDaPeca(m.getCapturada());
                         }
                     }
                 }
@@ -239,9 +229,9 @@ public class Agente_IA implements Serializable
                         // contabiliza quantos movimentos podem ser feitos
 
                         MovimentoJogador++;
-                        if (m.getCaptured() != null) {
+                        if (m.getCapturada() != null) {
                             // conta para possíveis capturas
-                             jogadoresCapturados+= valorDaPeca(m.getCaptured());
+                             jogadoresCapturados+= valorDaPeca(m.getCapturada());
                         }
                     }
                 }
@@ -257,6 +247,7 @@ public class Agente_IA implements Serializable
         else if (gameBoard.getVirar() != iaCor && MovimentoJogador == 0)
            // se o jogador não puder fazer mais movimentos, nós ganhamos. isso é bom.
             valor = Integer.MAX_VALUE;  //chave do projeto
+       // System.out.println("ValorTab : "+valor);https://www.comp.uems.br/~PFC/PFC%20179.pdf
         return valor;
     }
        
@@ -266,10 +257,8 @@ public class Agente_IA implements Serializable
      * @valor de retorno da peça
      */
     public static  int valorDaPeca(Peca pc) {
-        return (int)Math.pow(pc.getNumImagem() + 1, 3) * 100;
+        return (int)Math.pow(pc.getNumImagem() + 1, 3)*100 ;
     }
-    
-    
 
     public String mostrarMove(Point x)
     {
@@ -386,10 +375,7 @@ public class Agente_IA implements Serializable
                            return ("e1");
                        }
                         else
-                            return "ForaTabuleiro";
-                       
-       
-        
+                            return "ForaTabuleiro";  
     }
     
 }

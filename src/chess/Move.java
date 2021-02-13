@@ -2,11 +2,10 @@ package chess;
 
 import java.awt.Point;
 
-/**
- * Provides a convenient way of handling moves on the board
- *
- */
-public class Move {
+//Responsavel por controlar todo o movimento do tabuleiro
+
+public class Move 
+{
     private Peca toMove;
     private Point moveTo;
     private Peca toCapture;
@@ -17,7 +16,8 @@ public class Move {
      * @param moveTo o local para onde mover
      * @param para capturar a peça capturada, nulo se nenhuma
      */
-    public Move(Peca toMove, Point moveTo, Peca toCapture) {
+    public Move(Peca toMove, Point moveTo, Peca toCapture) 
+    {
         this.toMove = toMove;
         this.moveTo = moveTo;
         this.toCapture = toCapture;
@@ -29,7 +29,7 @@ public class Move {
     }
     
     //Retorna a peca que esta sendo movida
-    public Peca getPiece() {
+    public Peca getPeca() {
         return toMove;
     }
     
@@ -39,7 +39,8 @@ public class Move {
      */
 
 
-    public Peca getCaptured() {
+    public Peca getCapturada()
+    {
         return toCapture;
     }
 }

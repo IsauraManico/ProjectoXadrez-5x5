@@ -22,8 +22,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.ListModel;
-import jdk.nashorn.internal.ir.RuntimeNode.Request;
 
 /**
  * Um component para jogar e implementar o xadrez
@@ -111,7 +109,31 @@ public class PanelJogo extends JComponent implements MouseListener
      */
     public void novoIAJogo()
     {       
-        int profundidadeIA=4;
+        int profundidadeIA = 0;
+        
+        Object nivel = JOptionPane.showInputDialog(this, "Selecione o nivel do IA:"+
+                "Facil(depth(3); Normal Depth(4)","",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[] {"Facil", "Normal"},
+                "Facil");
+        
+        if( nivel == null)
+        {
+            return;
+        }
+        else
+        {
+            if( nivel.toString().equals("Facil"))
+            {
+                profundidadeIA = 3;
+            }
+            else
+            {
+                profundidadeIA = 4;
+                
+            }
+        }
 
         corIA = Peca.Color.preta;
         
@@ -223,37 +245,20 @@ public class PanelJogo extends JComponent implements MouseListener
         // se um jogo para dois jogadores
         if (jogoTabuleiro.getAi() == null)
            // pula um movimento para trás
-            jogoTabuleiro = jogoTabuleiro.getEstadoAnterior();
-        else
+                jogoTabuleiro = jogoTabuleiro.getEstadoAnterior();
+        else{
             // volta para o último movimento do jogador
-
             if (jogoTabuleiro.getVirar() != jogoTabuleiro.getAi().getColor())
                 jogoTabuleiro = jogoTabuleiro.getEstadoAnterior().getEstadoAnterior();
             else
                 jogoTabuleiro = jogoTabuleiro.getEstadoAnterior();
+        }
         //define o ultimo estado do jogador
         estado = estadoDoJogo.Started;
         
         this.repaint();      
     }
     
-
-
-
-
-
-public String mostrarJList( DefaultListModel<String> l1)
-{
-    StringBuilder sb = new StringBuilder();
-    
-    for ( int i = 0;i<l1.getSize();i++)
-    {
-         sb.append(l1.getElementAt(i));
-         sb.append("\n");
-    }
-   
-    return sb.toString();
-}
      /**
      * Salva o estado do quadro no Arquivo
      */
@@ -272,7 +277,6 @@ public String mostrarJList( DefaultListModel<String> l1)
             if(Arquivo.Write("SALVOS/player1.txt",l1.toString())){
                 System.out.println("ARQUIVO SALVO Agente");
             }
-
         } catch (Exception e) {
             // in case of an exception
             String message = "Não pode guardar o jogo. " +e.getMessage();
@@ -283,7 +287,8 @@ public String mostrarJList( DefaultListModel<String> l1)
         }
     }  
     
-   
+    
+    
     private void carregamentoDeImagens(){
         try {
            // inicializa duas matrizes de bufferedImages
@@ -351,12 +356,12 @@ public String mostrarJList( DefaultListModel<String> l1)
         }
     }
     
+    
   /**
      * Responde a um evento mousePressed
      * @param e
      */
-
-
+    
     @Override
     public void mousePressed(MouseEvent e) 
     { 
@@ -384,6 +389,7 @@ public String mostrarJList( DefaultListModel<String> l1)
                     {  
                       // obtém os movimentos disponíveis para a peça
                         okMoves = pecaSelecionada.getValidMoves(jogoTabuleiro, true);
+                        System.out.println("Valor: "+Agente_IA.valorDaPeca(pecaSelecionada));
                        // se a peça for da cor errada, marcar como inválido
                         if(pecaSelecionada.getColor() != jogoTabuleiro.getVirar()) 
                         {
@@ -401,10 +407,10 @@ public String mostrarJList( DefaultListModel<String> l1)
                   // em caso afirmativo, execute esse movimento
                     if (playerMove != null) 
                     {
-                        jogada="White payed "+this.mostrarMove(playerMove.getPiece().getLocalizacao())
+                        jogada="White payed "+this.mostrarMove(playerMove.getPeca().getLocalizacao())
                             +this.mostrarMove(playerMove.getMoveTo());
                             l1.addElement(agenteIA.jogada);
-                            l1.addElement(this.mostrarMove(playerMove.getPiece().getLocalizacao())
+                            l1.addElement(this.mostrarMove(playerMove.getPeca().getLocalizacao())
                             +this.mostrarMove(playerMove.getMoveTo())); 
                             agenteIA.l1.addElement(jogada);
                             
@@ -445,15 +451,13 @@ public String mostrarJList( DefaultListModel<String> l1)
                 // repintar o tabuleiro imediatamente, antes que JOptionPane seja mostrado.
                 this.paintImmediately(0, 0, this.getWidth(), this.getHeight());
                 
-            // se um rei não estiver em xeque, empate
-
-
+                // se um rei não estiver em xeque, empate
                 if (jogoTabuleiro.getPecaEmCheck() == null) {
                     estado = estadoDoJogo.Stalemate;
                     l1.addElement("EMPATE");
                     agenteIA.l1.addElement("EMPATE");
                     JOptionPane.showMessageDialog(this,
-                            "Empate!!",
+                            "Empate!! custo: "+Agente_IA.custo/100,
                             "",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -462,7 +466,7 @@ public String mostrarJList( DefaultListModel<String> l1)
                     l1.addElement("CHEQUE MATE");
                     agenteIA.l1.addElement("CHEQUE MATE");
                     JOptionPane.showMessageDialog(this,
-                            "Cheque mate!",
+                            "Cheque mate! Custo: "+Agente_IA.custo/100,
                             "",
                             JOptionPane.INFORMATION_MESSAGE);
                 }  
@@ -474,10 +478,10 @@ public String mostrarJList( DefaultListModel<String> l1)
                 if (!diretorio.exists())
                     diretorio.mkdir();
 
-                if(Arquivo.Write("SALVOS/player2.txt",agenteIA.l1.toString()+"\n")){
+                if(Arquivo.Write("SALVOS/player2.txt",agenteIA.l1.toString())){
                     System.out.println("Player1 Salvo!");
                 }
-                if(Arquivo.Write("SALVOS/player1.txt",l1.toString()+"\n")){
+                if(Arquivo.Write("SALVOS/player1.txt",l1.toString())){
                     System.out.println("Player2 salvo!");
                 }
             }
@@ -685,8 +689,6 @@ Desenha peças para o objeto gráfico
         }
         g.fillRect(4*sH, 1*sW, sW, sH);
         g.fillRect(4*sH, 3*sW, sW, sH);
-        
-        
     }  
     
     /**
@@ -702,7 +704,7 @@ Desenha peças para o objeto gráfico
             }   
             else{ 
                 if(jaGuardou==false){
-                    moveInvalido="Ilegal move "+this.mostrarMove(m.getPiece().getLocalizacao());
+                    moveInvalido="Ilegal move "+this.mostrarMove(m.getPeca().getLocalizacao());
                     jaGuardou=true;
                 }
             }    
@@ -711,9 +713,11 @@ Desenha peças para o objeto gráfico
         return null;
     }    
     
+    
     public static DefaultListModel lista(){
         return l1;
     }
+    
     
     public void mouseExited(MouseEvent e) { }    
    
