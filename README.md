@@ -2,8 +2,8 @@
 Jogo Xadrez 5x5
 
 
-Jogo Xadrez, criado totalmente em Java2D com uma comunicação com Inteligência artificial, de forma a criar um agente automático
-capaz  de jogar contra o humano em um tabuleiro reduzido 5x5
+Jogo Xadrez, requisitado na Cadeira de Sistemas Inteligentes I, foi criado totalmente em Java2D com uma comunicação com Inteligência artificial, devido aos conhecimentos aprendidos no mesmo,  de forma a criar um agente automático
+capaz  de jogar contra o humano em um tabuleiro reduzido 5x5, com o Algoritmo Mini-Max alpha beta Poda.
 
 Autores:
 
