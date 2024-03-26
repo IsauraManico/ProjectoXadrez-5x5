@@ -7,7 +7,9 @@ capaz  de jogar contra o humano em um tabuleiro reduzido 5x5, com o Algoritmo Mi
 
 Autores:
 
-[Sara David](https://github.com/SaraTuma), Valter Kiala, Leonel Caetano, [Isaura Manico](https://github.com/IsauraManico)
+[Isaura Manico](https://github.com/IsauraManico)
+
+[Sara David](https://github.com/SaraTuma), Valter Kiala, Leonel Caetano, 
 
 
 [O relatorio do projeto encontra-se em: driver](https://drive.google.com/file/d/1YcsRoDJsO-_or0Jsr0yAkktVDa08eyHS/view?usp=sharing)
